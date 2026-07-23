@@ -58,7 +58,7 @@
       margin-bottom: 25px;
     }
 
-    /* 2. Primary Buttons */
+    /* Primary Buttons */
     .btn {
       background: linear-gradient(135deg, #8a2be2, #4a00e0);
       color: #ffffff;
@@ -78,18 +78,14 @@
       box-shadow: 0 0 30px rgba(187, 134, 252, 0.9);
     }
 
-    .btn:active {
-      transform: translateY(1px) scale(0.98);
-    }
-
-    /* Hidden Show On Button inside black screen initially */
+    /* Show On Button */
     #show-on-btn {
       display: none;
     }
 
-    /* 3. Main Card Container */
+    /* 2. Main Birthday Card */
     .card-container {
-      display: none; /* Revealed by Show On button */
+      display: none;
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(15px);
       border: 1px solid rgba(187, 134, 252, 0.2);
@@ -107,11 +103,12 @@
     .title {
       font-size: 2.6rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #e0b0ff, #9b51e0, #ffffff);
+      background: linear-gradient(135deg, #e0b0ff, #ff69b4, #ffffff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 15px;
       text-shadow: 0 0 20px rgba(155, 81, 224, 0.5);
+      animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .message {
@@ -121,7 +118,42 @@
       margin-bottom: 25px;
     }
 
-    /* 4. Date Proposal Section */
+    /* 3. Floating Heart Balloons */
+    .balloon-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .heart-balloon {
+      position: absolute;
+      bottom: -100px;
+      font-size: 2.5rem;
+      animation: floatUp 8s linear infinite;
+      opacity: 0.8;
+    }
+
+    /* 4. Large Background Double Heart */
+    #heart-bg {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 25rem;
+      opacity: 0.18;
+      z-index: 1;
+      pointer-events: none;
+      animation: floatPulse 3s infinite ease-in-out;
+      user-select: none;
+    }
+
+    /* Date Section */
     #date-section {
       display: none;
       margin-top: 25px;
@@ -150,22 +182,7 @@
       box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
     }
 
-    /* 5. Double Joined Hearts Background */
-    #heart-bg {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 18rem;
-      opacity: 0.15;
-      z-index: 1;
-      pointer-events: none;
-      animation: floatPulse 3s infinite ease-in-out;
-      user-select: none;
-    }
-
-    /* Animations */
+    /* Keyframe Animations */
     @keyframes pulse {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
@@ -174,6 +191,22 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-110vh) rotate(20deg);
+        opacity: 0;
+      }
     }
 
     @keyframes floatPulse {
@@ -190,14 +223,17 @@
     <button id="show-on-btn" class="btn" onclick="revealBirthdayCard()">Show On</button>
   </div>
 
-  <!-- Background Double Hearts -->
+  <!-- Flying Heart Balloons Container -->
+  <div id="balloon-container" class="balloon-container"></div>
+
+  <!-- Large Double Heart Background -->
   <div id="heart-bg">💕</div>
 
-  <!-- 2. Main Birthday Wish Card -->
+  <!-- 2. Birthday Wish Card -->
   <div id="main-card" class="card-container">
     <h1 class="title">Happy Birthday Juujuu! 💕🎉</h1>
     <p class="message">
-      May your year ahead be filled with endless joy, unforgettable moments, and incredible success.
+      May your year ahead be filled with endless joy, unforgettable moments, and incredible success with me.
     </p>
     
     <button id="celebrate-btn" class="btn" onclick="celebrate()">Celebrate ✨</button>
@@ -206,20 +242,20 @@
     <div id="date-section">
       <p class="date-text">will come out for dating in aug 9?</p>
       <div class="button-group">
-        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait! ❤️')">i will</button>
-        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait! ❤️')">i will</button>
+        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait for Aug 9! ❤️')">i will</button>
+        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait for Aug 9! ❤️')">i will</button>
       </div>
     </div>
   </div>
 
   <script>
-    // 1. Show "Show On" button after 30 seconds
+    // 1. Reveal "Show On" button after 30 seconds
     setTimeout(() => {
       document.getElementById('loading-msg').style.display = 'none';
       document.getElementById('show-on-btn').style.display = 'inline-block';
-    }, 30000); // 30000 milliseconds = 30 seconds
+    }, 30000); // 30 seconds
 
-    // 2. Hide Black Screen & Reveal Card
+    // 2. Hide Black Screen & Reveal Card + Heart Balloons
     function revealBirthdayCard() {
       const blackScreen = document.getElementById('black-screen');
       blackScreen.classList.add('fade-out');
@@ -227,31 +263,53 @@
       setTimeout(() => {
         blackScreen.style.display = 'none';
         document.getElementById('main-card').style.display = 'block';
+        startFlyingBalloons();
       }, 1000);
     }
 
-    // 3. Celebrate Action: Purple Glitter + Double Hearts + Date Text & Options
+    // Spawn Flying Heart Balloons
+    function startFlyingBalloons() {
+      const container = document.getElementById('balloon-container');
+      const balloonIcons = ['🎈', '💖', '❤️', '💕', '🎈'];
+      
+      setInterval(() => {
+        const balloon = document.createElement('div');
+        balloon.className = 'heart-balloon';
+        balloon.innerText = balloonIcons[Math.floor(Math.random() * balloonIcons.length)];
+        balloon.style.left = Math.random() * 100 + 'vw';
+        balloon.style.animationDuration = (6 + Math.random() * 4) + 's';
+        
+        container.appendChild(balloon);
+        
+        setTimeout(() => {
+          balloon.remove();
+        }, 10000);
+      }, 600);
+    }
+
+    // 3. Celebrate Action: Red Heart Confetti + Large Background Heart
     function celebrate() {
-      // Show Background Double Joined Hearts
+      // Reveal Large Background Double Heart
       document.getElementById('heart-bg').style.display = 'block';
 
       // Hide Celebrate button and display Date Section
       document.getElementById('celebrate-btn').style.display = 'none';
       document.getElementById('date-section').style.display = 'block';
 
-      // Purple Glitter & Confetti Burst
-      const glitterColors = ['#8a2be2', '#9b51e0', '#e0b0ff', '#ffffff', '#ff69b4'];
+      // Red Hearts & Purple Glitter Particle Mix
+      const redAndPurpleColors = ['#ff0055', '#ff4081', '#8a2be2', '#9b51e0', '#ffffff'];
 
+      // Center Heart Explosions
       confetti({
-        particleCount: 130,
-        spread: 85,
+        particleCount: 150,
+        spread: 90,
         origin: { y: 0.6 },
-        colors: glitterColors,
-        scalar: 1.2
+        colors: redAndPurpleColors,
+        scalar: 1.3
       });
 
-      // Continuous Fireworks Stream
-      const duration = 3 * 1000;
+      // Continuous Flying Red Heart & Glitter Stream
+      const duration = 3.5 * 1000;
       const animationEnd = Date.now() + duration;
 
       const interval = setInterval(function() {
@@ -262,22 +320,22 @@
         }
 
         confetti({
-          particleCount: 8,
+          particleCount: 10,
           angle: 60,
-          spread: 55,
+          spread: 60,
           origin: { x: 0, y: 0.7 },
-          colors: glitterColors
+          colors: redAndPurpleColors
         });
 
         confetti({
-          particleCount: 8,
+          particleCount: 10,
           angle: 120,
-          spread: 55,
+          spread: 60,
           origin: { x: 1, y: 0.7 },
-          colors: glitterColors
+          colors: redAndPurpleColors
         });
       }, 150);
     }
   </script>
-</body>
+  </body>
 </html>
