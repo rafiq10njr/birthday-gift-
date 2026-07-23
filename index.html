@@ -41,30 +41,25 @@
       justify-content: center;
       align-items: center;
       opacity: 1;
-      transition: opacity 1s ease;
-    }
-
-    #black-screen.fade-out {
-      opacity: 0;
-      pointer-events: none;
+      transition: opacity 1.2s ease, transform 1.2s ease;
     }
 
     /* Floating Heart Box containing the Show On button */
     .heart-button-wrapper {
+      display: none; /* Hidden during the first 30 seconds */
       position: relative;
-      width: 220px;
-      height: 220px;
-      display: flex;
+      width: 250px;
+      height: 250px;
       justify-content: center;
       align-items: center;
-      animation: fadeInSlow 2.5s ease forwards;
+      animation: brightenHeart 3s ease forwards;
     }
 
     .heart-shape {
       position: absolute;
-      font-size: 14rem;
+      font-size: 15rem;
       user-select: none;
-      filter: drop-shadow(0 0 25px rgba(255, 105, 180, 0.9));
+      filter: drop-shadow(0 0 35px rgba(255, 105, 180, 1));
       animation: floatPulse 2.5s infinite ease-in-out;
       z-index: 1;
     }
@@ -81,7 +76,7 @@
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 15px rgba(138, 43, 226, 0.8);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.9), 0 0 15px rgba(138, 43, 226, 0.9);
       transition: all 0.3s ease;
       outline: none;
     }
@@ -91,48 +86,15 @@
       box-shadow: 0 0 35px rgba(255, 255, 255, 1);
     }
 
-    #heart-wrapper {
-      display: none;
+    /* Opening Heart Animation state */
+    .open-heart-anim {
+      transform: scale(3);
+      opacity: 0 !important;
+      transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s ease;
+      pointer-events: none;
     }
 
-    /* 2. Interactive Single Heart Screen */
-    #single-heart-screen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 50;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      animation: fadeIn 1s ease forwards;
-    }
-
-    .single-heart {
-      font-size: 12rem;
-      cursor: pointer;
-      user-select: none;
-      filter: drop-shadow(0 0 35px rgba(255, 20, 147, 0.9));
-      animation: floatPulse 2s infinite ease-in-out;
-      transition: transform 0.3s ease;
-    }
-
-    .single-heart:hover {
-      transform: scale(1.2);
-    }
-
-    .click-prompt {
-      margin-top: 15px;
-      font-size: 1.2rem;
-      color: #ffb7c5;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(255, 183, 197, 0.7);
-      animation: pulseText 1.5s infinite ease-in-out;
-    }
-
-    /* 3. Main Birthday Card */
+    /* 2. Main Birthday Card */
     .card-container {
       display: none;
       background: rgba(255, 255, 255, 0.05);
@@ -146,7 +108,7 @@
       box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
       position: relative;
       z-index: 10;
-      animation: fadeIn 1.2s ease forwards;
+      animation: fadeInCard 1.2s ease forwards;
     }
 
     .title {
@@ -167,7 +129,7 @@
       margin-bottom: 25px;
     }
 
-    /* 4. Floating Heart Balloons */
+    /* 3. Floating Heart Balloons */
     .balloon-container {
       position: fixed;
       top: 0;
@@ -209,7 +171,7 @@
       margin-top: 25px;
       padding-top: 20px;
       border-top: 1px dashed rgba(187, 134, 252, 0.3);
-      animation: fadeIn 1s ease forwards;
+      animation: fadeInCard 1s ease forwards;
     }
 
     .date-text {
@@ -238,16 +200,24 @@
     #affection-section {
       display: none;
       margin-top: 20px;
-      animation: fadeIn 1s ease forwards;
+      animation: fadeInCard 1s ease forwards;
     }
 
     /* Keyframe Animations */
-    @keyframes fadeInSlow {
-      0% { opacity: 0; transform: scale(0.7); }
-      100% { opacity: 1; transform: scale(1); }
+    @keyframes brightenHeart {
+      0% {
+        opacity: 0;
+        filter: brightness(0.2) blur(10px);
+        transform: scale(0.6);
+      }
+      100% {
+        opacity: 1;
+        filter: brightness(1.2) blur(0px);
+        transform: scale(1);
+      }
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInCard {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
@@ -270,29 +240,18 @@
 
     @keyframes floatPulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.12); }
-    }
-
-    @keyframes pulseText {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
+      50% { transform: scale(1.1); }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. Pure Black Screen Overlay -->
+  <!-- 1. Pure Black Overlay Screen -->
   <div id="black-screen">
     <div id="heart-wrapper" class="heart-button-wrapper">
       <div class="heart-shape">💕</div>
-      <button id="show-on-btn" class="btn" onclick="revealSingleHeart()">Show On</button>
+      <button id="show-on-btn" class="btn" onclick="openHeartAndRevealCard()">Show On</button>
     </div>
-  </div>
-
-  <!-- 2. Single Heart Screen -->
-  <div id="single-heart-screen">
-    <div class="single-heart" onclick="openWishCard()">❤️</div>
-    <p class="click-prompt">Tap the heart to open ✨</p>
   </div>
 
   <!-- Effect Container -->
@@ -301,7 +260,7 @@
   <!-- Brighter Large Double Heart Background -->
   <div id="heart-bg">💕</div>
 
-  <!-- 3. Birthday Wish Card -->
+  <!-- 2. Birthday Wish Card -->
   <div id="main-card" class="card-container">
     <h1 class="title">Happy Birthday Juujuu! 💕🎉</h1>
     <p class="message">
@@ -310,7 +269,7 @@
     
     <button id="celebrate-btn" class="btn" onclick="celebrate()">Celebrate ✨</button>
 
-    <!-- 4. Date Invitation Section -->
+    <!-- 3. Date Invitation Section -->
     <div id="date-section">
       <div id="first-question">
         <p class="date-text">will come out for dating in aug 9?</p>
@@ -320,7 +279,7 @@
         </div>
       </div>
 
-      <!-- 5. Follow-up Affection Section -->
+      <!-- 4. Follow-up Affection Section -->
       <div id="affection-section">
         <p class="date-text">Yay! Will you give a Kiss, Hug, or Both on Aug 9? 😘</p>
         <div class="button-group">
@@ -333,27 +292,23 @@
   </div>
 
   <script>
-    // 1. Reveal "Show On" heart button after 30 seconds
+    // 1. Slowly brighten and reveal the heart with the "Show On" button after 30 seconds
     setTimeout(() => {
       document.getElementById('heart-wrapper').style.display = 'flex';
     }, 30000);
 
-    // 2. Hide Black Screen & Reveal Single Heart
-    function revealSingleHeart() {
+    // 2. Open Heart transition & display birthday wish card
+    function openHeartAndRevealCard() {
       const blackScreen = document.getElementById('black-screen');
-      blackScreen.classList.add('fade-out');
+      
+      // Heart opens up (scales big and fades out)
+      blackScreen.classList.add('open-heart-anim');
       
       setTimeout(() => {
         blackScreen.style.display = 'none';
-        document.getElementById('single-heart-screen').style.display = 'flex';
+        document.getElementById('main-card').style.display = 'block';
+        startFlyingBalloons();
       }, 1000);
-    }
-
-    // 3. Click Single Heart to Open Wish Card
-    function openWishCard() {
-      document.getElementById('single-heart-screen').style.display = 'none';
-      document.getElementById('main-card').style.display = 'block';
-      startFlyingBalloons();
     }
 
     // Spawn Flying Heart Balloons
@@ -376,7 +331,7 @@
       }, 500);
     }
 
-    // 4. Celebrate Action
+    // 3. Celebrate Action
     function celebrate() {
       document.getElementById('heart-bg').style.display = 'block';
       document.getElementById('celebrate-btn').style.display = 'none';
@@ -385,7 +340,7 @@
       triggerSideCheerPaper();
     }
 
-    // 5. Handle "i will" click
+    // 4. Handle "i will" click
     function acceptDate() {
       document.getElementById('first-question').style.display = 'none';
       document.getElementById('affection-section').style.display = 'block';
@@ -393,7 +348,7 @@
       triggerSideCheerPaper();
     }
 
-    // 6. Handle Final Choice
+    // 5. Handle Final Choice
     function finalChoice(option) {
       alert(`Can't wait for Aug 9! Sending you lots of love for choosing ${option}! ❤️✨`);
       triggerSideCheerPaper();
