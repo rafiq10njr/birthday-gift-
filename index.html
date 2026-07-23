@@ -1,405 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!</title>
+  
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <style>
-    #white-screen {
+    /* Global Reset & Dark Theme */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #1b0228, #090010);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* 1. Black Overlay Screen (30 Seconds) */
+    #black-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #ffffff;
+      background-color: #000000;
       z-index: 99999;
-      opacity: 1;
-      transition: opacity 1s ease;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
+      opacity: 1;
+      transition: opacity 1.5s ease;
     }
 
-    #white-screen.fade-out {
+    #black-screen.fade-out {
       opacity: 0;
       pointer-events: none;
     }
+
+    .loading-text {
+      color: #bb86fc;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      animation: pulse 2s infinite;
+    }
+
+    /* 2. Birthday Card Styling */
+    .card-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(187, 134, 252, 0.2);
+      border-radius: 20px;
+      padding: 40px 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
+      position: relative;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #e0b0ff, #9b51e0, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px rgba(155, 81, 224, 0.5);
+    }
+
+    .message {
+      font-size: 1.1rem;
+      color: #d8c4f0;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    /* 3. Celebrate Button */
+    .celebrate-btn {
+      background: linear-gradient(135deg, #8a2be2, #4a00e0);
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 15px 35px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .celebrate-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 0 30px rgba(187, 134, 252, 0.9);
+    }
+
+    .celebrate-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
   </style>
 </head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday!</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-overflow:hidden;
-font-family:Poppins,sans-serif;
-height:100vh;
-background:linear-gradient(135deg,#2b1055,#5f2c82,#9b59b6);
-display:flex;
-justify-content:center;
-align-items:center;
-color:white;
-}
-
-.card{
-position:relative;
-z-index:5;
-width:90%;
-max-width:420px;
-padding:35px;
-border-radius:25px;
-text-align:center;
-background:rgba(255,255,255,.12);
-backdrop-filter:blur(14px);
-box-shadow:0 0 30px rgba(255,255,255,.25);
-animation:pop 1s ease;
-}
-
-@keyframes pop{
-0%{transform:scale(.3);opacity:0;}
-100%{transform:scale(1);opacity:1;}
-}
-
-h1{
-font-family:Pacifico,cursive;
-font-size:3rem;
-margin-bottom:15px;
-text-shadow:0 0 20px #fff;
-}
-
-h2{
-font-size:1.3rem;
-font-weight:600;
-margin-bottom:20px;
-}
-
-p{
-font-size:1rem;
-line-height:1.6;
-opacity:.95;
-}
-
-button{
-margin-top:25px;
-padding:13px 28px;
-border:none;
-border-radius:30px;
-font-size:17px;
-font-weight:bold;
-background:#ff4da6;
-color:white;
-cursor:pointer;
-transition:.3s;
-box-shadow:0 0 20px #ff4da6;
-}
-
-button:hover{
-transform:scale(1.08);
-background:#ff66b8;
-}
-
-canvas{
-position:absolute;
-top:0;
-left:0;
-pointer-events:none;
-}
-
-/* Balloons */
-
-.balloon{
-position:absolute;
-bottom:-160px;
-width:55px;
-height:70px;
-border-radius:50%;
-animation:float linear infinite;
-}
-
-.balloon:after{
-content:"";
-position:absolute;
-width:2px;
-height:80px;
-background:white;
-left:50%;
-top:70px;
-}
-
-@keyframes float{
-0%{
-transform:translateY(0);
-}
-100%{
-transform:translateY(-130vh);
-}
-}
-
-@media(max-width:600px){
-
-h1{
-font-size:2.2rem;
-}
-
-h2{
-font-size:1.1rem;
-}
-
-.card{
-padding:25px;
-}
-
-button{
-width:100%;
-}
-
-}
-</style>
-</head>
-
 <body>
-  <div id="white-screen"></div>
 
-<canvas id="confetti"></canvas>
-<canvas id="glitter"></canvas>
-
-<div class="card">
-
-<h1>🎉 Happy Birthday 🎉</h1>
-
-<h2>Wishing You Endless Happiness!</h2>
-
-<p>
-May your birthday be filled with laughter,
-love, wonderful surprises,
-and unforgettable memories.
-Have an amazing year ahead! 💜✨
-</p>
-
-<button onclick="burst()">
-🎂 Celebrate!
-</button>
-
-</div>
-
-<script>
-
-/* BALLOONS */
-
-const colors=[
-"#ff4d6d",
-"#00d4ff",
-"#ffd93d",
-"#8aff80",
-"#ff66ff",
-"#ff9966"
-];
-
-for(let i=0;i<18;i++){
-
-let b=document.createElement("div");
-b.className="balloon";
-
-b.style.left=Math.random()*100+"vw";
-
-b.style.background=colors[Math.floor(Math.random()*colors.length)];
-
-b.style.animationDuration=(8+Math.random()*6)+"s";
-
-b.style.animationDelay=Math.random()*6+"s";
-
-document.body.appendChild(b);
-
-}
-
-/* CONFETTI */
-
-const canvas=document.getElementById("confetti");
-const ctx=canvas.getContext("2d");
-
-canvas.width=innerWidth;
-canvas.height=innerHeight;
-
-let confetti=[];
-
-for(let i=0;i<250;i++){
-
-confetti.push({
-
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*6+2,
-d:Math.random()*250,
-color:`hsl(${Math.random()*360},100%,60%)`,
-tilt:Math.random()*10
-
-});
-
-}
-
-function drawConfetti(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-confetti.forEach(c=>{
-
-ctx.beginPath();
-
-ctx.fillStyle=c.color;
-
-ctx.fillRect(c.x,c.y,c.r,c.r*2);
-
-});
-
-updateConfetti();
-
-requestAnimationFrame(drawConfetti);
-
-}
-
-let angle=0;
-
-function updateConfetti(){
-
-angle+=0.01;
-
-confetti.forEach(c=>{
-
-c.y+=(Math.cos(angle+c.d)+3+c.r/2)/2;
-
-c.x+=Math.sin(angle);
-
-if(c.y>canvas.height){
-
-c.y=-20;
-c.x=Math.random()*canvas.width;
-
-}
-
-});
-
-}
-
-drawConfetti();
-
-/* PURPLE GLITTER */
-
-const glitterCanvas=document.getElementById("glitter");
-const gtx=glitterCanvas.getContext("2d");
-
-glitterCanvas.width=innerWidth;
-glitterCanvas.height=innerHeight;
-
-let glitter=[];
-
-for(let i=0;i<170;i++){
-
-glitter.push({
-
-x:Math.random()*glitterCanvas.width,
-y:Math.random()*glitterCanvas.height,
-size:Math.random()*4+1,
-speed:Math.random()*3+1,
-alpha:Math.random()
-
-});
-
-}
-
-function sparkle(){
-
-gtx.clearRect(0,0,glitterCanvas.width,glitterCanvas.height);
-
-glitter.forEach(g=>{
-
-g.y+=g.speed;
-
-if(g.y>glitterCanvas.height){
-
-g.y=-10;
-g.x=Math.random()*glitterCanvas.width;
-
-}
-
-gtx.beginPath();
-
-gtx.fillStyle=`rgba(220,120,255,${g.alpha})`;
-
-gtx.shadowBlur=18;
-
-gtx.shadowColor="#d066ff";
-
-gtx.arc(g.x,g.y,g.size,0,Math.PI*2);
-
-gtx.fill();
-
-});
-
-requestAnimationFrame(sparkle);
-
-}
-
-sparkle();
-
-window.onresize=()=>{
-
-canvas.width=innerWidth;
-canvas.height=innerHeight;
-
-glitterCanvas.width=innerWidth;
-glitterCanvas.height=innerHeight;
-
-}
-
-/* BUTTON EFFECT */
-
-function burst(){
-
-for(let i=0;i<100;i++){
-
-confetti.push({
-
-x:canvas.width/2,
-y:canvas.height/2,
-r:Math.random()*8+3,
-d:Math.random()*200,
-color:`hsl(${Math.random()*360},100%,60%)`
-
-});
-
-}
-
-}
-
-/*
-Optional Music
-
-<audio autoplay loop>
-<source src="birthday.mp3" type="audio/mpeg">
-</audio>
-
-Place birthday.mp3 in the same folder.
-*/
-<script>
+  <!-- Black Screen Overlay -->
+  <div id="black-screen">
+    <p class="loading-text">✨ Preparing your special surprise...</p>
+  </div>
+
+  <!-- Birthday Wish Content -->
+  <div class="card-container">
+    <h1 class="title">Happy Birthday! 🎉</h1>
+    <p class="message">
+      May your year ahead be filled with endless joy, unforgettable moments, and incredible success. 
+      Press the button below to start the celebration!
+    </p>
+    <button class="celebrate-btn" onclick="triggerPurpleGlitter()">Celebrate ✨</button>
+  </div>
+
+  <script>
+    // 1. Black Screen Delay (30 Seconds)
     setTimeout(() => {
-      const screen = document.getElementById('white-screen');
-      if (screen) {
-        screen.classList.add('fade-out');
-        
+      const blackScreen = document.getElementById('black-screen');
+      if (blackScreen) {
+        blackScreen.classList.add('fade-out');
         setTimeout(() => {
-          screen.style.display = 'none';
-        }, 1000); 
+          blackScreen.style.display = 'none';
+        }, 1500); // Wait for fade transition to finish
       }
-    }, 30000); // 30 seconds
-  </script>
-</body>
-</script>
+    }, 30000); // 30000 ms = 30 seconds
 
+    // 2. Purple Glitter & Confetti Burst Function
+    function triggerPurpleGlitter() {
+      // Purple, lavender, silver, and pink glitter colors
+      const glitterColors = ['#8a2be2', '#9b51e0', '#e0b0ff', '#ffffff', '#ff69b4'];
+
+      // Center explosion
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: glitterColors,
+        scalar: 1.2
+      });
+
+      // Side fireworks stream
+      const duration = 2.5 * 1000;
+      const animationEnd = Date.now() + duration;
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        // Left side stream
+        confetti({
+          particleCount: 8,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.7 },
+          colors: glitterColors
+        });
+
+        // Right side stream
+        confetti({
+          particleCount: 8,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.7 },
+          colors: glitterColors
+        });
+      }, 150);
+    }
+  </script>
 </body>
 </html>
