@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+overflow:hidden;
+font-family:Poppins,sans-serif;
+height:100vh;
+background:linear-gradient(135deg,#2b1055,#5f2c82,#9b59b6);
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+}
+
+.card{
+position:relative;
+z-index:5;
+width:90%;
+max-width:420px;
+padding:35px;
+border-radius:25px;
+text-align:center;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(14px);
+box-shadow:0 0 30px rgba(255,255,255,.25);
+animation:pop 1s ease;
+}
+
+@keyframes pop{
+0%{transform:scale(.3);opacity:0;}
+100%{transform:scale(1);opacity:1;}
+}
+
+h1{
+font-family:Pacifico,cursive;
+font-size:3rem;
+margin-bottom:15px;
+text-shadow:0 0 20px #fff;
+}
+
+h2{
+font-size:1.3rem;
+font-weight:600;
+margin-bottom:20px;
+}
+
+p{
+font-size:1rem;
+line-height:1.6;
+opacity:.95;
+}
+
+button{
+margin-top:25px;
+padding:13px 28px;
+border:none;
+border-radius:30px;
+font-size:17px;
+font-weight:bold;
+background:#ff4da6;
+color:white;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 0 20px #ff4da6;
+}
+
+button:hover{
+transform:scale(1.08);
+background:#ff66b8;
+}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+pointer-events:none;
+}
+
+/* Balloons */
+
+.balloon{
+position:absolute;
+bottom:-160px;
+width:55px;
+height:70px;
+border-radius:50%;
+animation:float linear infinite;
+}
+
+.balloon:after{
+content:"";
+position:absolute;
+width:2px;
+height:80px;
+background:white;
+left:50%;
+top:70px;
+}
+
+@keyframes float{
+0%{
+transform:translateY(0);
+}
+100%{
+transform:translateY(-130vh);
+}
+}
+
+@media(max-width:600px){
+
+h1{
+font-size:2.2rem;
+}
+
+h2{
+font-size:1.1rem;
+}
+
+.card{
+padding:25px;
+}
+
+button{
+width:100%;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+<canvas id="glitter"></canvas>
+
+<div class="card">
+
+<h1>🎉 Happy Birthday 🎉</h1>
+
+<h2>Wishing You Endless Happiness!</h2>
+
+<p>
+May your birthday be filled with laughter,
+love, wonderful surprises,
+and unforgettable memories.
+Have an amazing year ahead! 💜✨
+</p>
+
+<button onclick="burst()">
+🎂 Celebrate!
+</button>
+
+</div>
+
+<script>
+
+/* BALLOONS */
+
+const colors=[
+"#ff4d6d",
+"#00d4ff",
+"#ffd93d",
+"#8aff80",
+"#ff66ff",
+"#ff9966"
+];
+
+for(let i=0;i<18;i++){
+
+let b=document.createElement("div");
+b.className="balloon";
+
+b.style.left=Math.random()*100+"vw";
+
+b.style.background=colors[Math.floor(Math.random()*colors.length)];
+
+b.style.animationDuration=(8+Math.random()*6)+"s";
+
+b.style.animationDelay=Math.random()*6+"s";
+
+document.body.appendChild(b);
+
+}
+
+/* CONFETTI */
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let confetti=[];
+
+for(let i=0;i<250;i++){
+
+confetti.push({
+
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*6+2,
+d:Math.random()*250,
+color:`hsl(${Math.random()*360},100%,60%)`,
+tilt:Math.random()*10
+
+});
+
+}
+
+function drawConfetti(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+confetti.forEach(c=>{
+
+ctx.beginPath();
+
+ctx.fillStyle=c.color;
+
+ctx.fillRect(c.x,c.y,c.r,c.r*2);
+
+});
+
+updateConfetti();
+
+requestAnimationFrame(drawConfetti);
+
+}
+
+let angle=0;
+
+function updateConfetti(){
+
+angle+=0.01;
+
+confetti.forEach(c=>{
+
+c.y+=(Math.cos(angle+c.d)+3+c.r/2)/2;
+
+c.x+=Math.sin(angle);
+
+if(c.y>canvas.height){
+
+c.y=-20;
+c.x=Math.random()*canvas.width;
+
+}
+
+});
+
+}
+
+drawConfetti();
+
+/* PURPLE GLITTER */
+
+const glitterCanvas=document.getElementById("glitter");
+const gtx=glitterCanvas.getContext("2d");
+
+glitterCanvas.width=innerWidth;
+glitterCanvas.height=innerHeight;
+
+let glitter=[];
+
+for(let i=0;i<170;i++){
+
+glitter.push({
+
+x:Math.random()*glitterCanvas.width,
+y:Math.random()*glitterCanvas.height,
+size:Math.random()*4+1,
+speed:Math.random()*3+1,
+alpha:Math.random()
+
+});
+
+}
+
+function sparkle(){
+
+gtx.clearRect(0,0,glitterCanvas.width,glitterCanvas.height);
+
+glitter.forEach(g=>{
+
+g.y+=g.speed;
+
+if(g.y>glitterCanvas.height){
+
+g.y=-10;
+g.x=Math.random()*glitterCanvas.width;
+
+}
+
+gtx.beginPath();
+
+gtx.fillStyle=`rgba(220,120,255,${g.alpha})`;
+
+gtx.shadowBlur=18;
+
+gtx.shadowColor="#d066ff";
+
+gtx.arc(g.x,g.y,g.size,0,Math.PI*2);
+
+gtx.fill();
+
+});
+
+requestAnimationFrame(sparkle);
+
+}
+
+sparkle();
+
+window.onresize=()=>{
+
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+glitterCanvas.width=innerWidth;
+glitterCanvas.height=innerHeight;
+
+}
+
+/* BUTTON EFFECT */
+
+function burst(){
+
+for(let i=0;i<100;i++){
+
+confetti.push({
+
+x:canvas.width/2,
+y:canvas.height/2,
+r:Math.random()*8+3,
+d:Math.random()*200,
+color:`hsl(${Math.random()*360},100%,60%)`
+
+});
+
+}
+
+}
+
+/*
+Optional Music
+
+<audio autoplay loop>
+<source src="birthday.mp3" type="audio/mpeg">
+</audio>
+
+Place birthday.mp3 in the same folder.
+*/
+
+</script>
+
+</body>
+</html>
