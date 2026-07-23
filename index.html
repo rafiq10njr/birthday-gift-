@@ -138,6 +138,26 @@
       opacity: 0.8;
     }
 
+    /* New Rose Shower Container */
+    .rose-shower-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1; /* Behind card, in front of background color */
+      overflow: hidden;
+    }
+
+    .rose-element {
+      position: absolute;
+      top: -100px;
+      font-size: 1.8rem;
+      animation: rainDown linear infinite;
+      opacity: 0.9;
+    }
+
     /* 4. Large Background Double Heart */
     #heart-bg {
       display: none;
@@ -147,7 +167,7 @@
       transform: translate(-50%, -50%);
       font-size: 25rem;
       opacity: 0.18;
-      z-index: 1;
+      z-index: 0; /* Very back */
       pointer-events: none;
       animation: floatPulse 3s infinite ease-in-out;
       user-select: none;
@@ -173,13 +193,22 @@
     .button-group {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .choice-btn {
       background: linear-gradient(135deg, #ff4081, #e91e63);
       box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
+      padding: 12px 25px;
+      font-size: 1.1rem;
+    }
+
+    /* Kiss / Hug Options Section */
+    #affection-section {
+      display: none;
+      margin-top: 20px;
+      animation: fadeIn 1s ease forwards;
     }
 
     /* Keyframe Animations */
@@ -209,6 +238,18 @@
       }
     }
 
+    /* New Rain Down animation for roses */
+    @keyframes rainDown {
+      0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg) translateX(20px);
+        opacity: 0;
+      }
+    }
+
     @keyframes floatPulse {
       0%, 100% { transform: translate(-50%, -50%) scale(1); }
       50% { transform: translate(-50%, -50%) scale(1.1); }
@@ -223,7 +264,8 @@
     <button id="show-on-btn" class="btn" onclick="revealBirthdayCard()">Show On</button>
   </div>
 
-  <!-- Flying Heart Balloons Container -->
+  <!-- flying-behind effect containers -->
+  <div id="rose-shower-container" class="rose-shower-container"></div>
   <div id="balloon-container" class="balloon-container"></div>
 
   <!-- Large Double Heart Background -->
@@ -240,10 +282,22 @@
 
     <!-- 3. Date Invitation Section -->
     <div id="date-section">
-      <p class="date-text">will come out for dating in aug 9?</p>
-      <div class="button-group">
-        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait for Aug 9! ❤️')">i will</button>
-        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait for Aug 9! ❤️')">i will</button>
+      <div id="first-question">
+        <p class="date-text">will come out for dating in aug 9?</p>
+        <div class="button-group">
+          <button class="btn choice-btn" onclick="acceptDate()">i will</button>
+          <button class="btn choice-btn" onclick="acceptDate()">i will</button>
+        </div>
+      </div>
+
+      <!-- 4. Follow-up Affection Section -->
+      <div id="affection-section">
+        <p class="date-text">Yay! Will you give a Kiss, Hug, or Both on Aug 9? 😘</p>
+        <div class="button-group">
+          <button class="btn choice-btn" onclick="finalChoice('Kiss 💋')">Kiss 💋</button>
+          <button class="btn choice-btn" onclick="finalChoice('Hug 🫂')">Hug 🫂</button>
+          <button class="btn choice-btn" onclick="finalChoice('Both 💋🫂')">Both! 💋🫂</button>
+        </div>
       </div>
     </div>
   </div>
@@ -255,7 +309,7 @@
       document.getElementById('show-on-btn').style.display = 'inline-block';
     }, 30000); // 30 seconds
 
-    // 2. Hide Black Screen & Reveal Card + Heart Balloons
+    // 2. Hide Black Screen & Reveal Card + Heart Balloons + Rose Shower
     function revealBirthdayCard() {
       const blackScreen = document.getElementById('black-screen');
       blackScreen.classList.add('fade-out');
@@ -264,6 +318,7 @@
         blackScreen.style.display = 'none';
         document.getElementById('main-card').style.display = 'block';
         startFlyingBalloons();
+        startRoseShower(); // Continuous effect starts here
       }, 1000);
     }
 
@@ -287,6 +342,29 @@
       }, 600);
     }
 
+    // NEW: Continuous Rose Flower Shower
+    function startRoseShower() {
+      const container = document.getElementById('rose-shower-container');
+      const roseIcons = ['🌹', '🥀', '❤️', '🌺', '💕']; // Mix of roses, hearts, and pink flowers
+      
+      setInterval(() => {
+        const rose = document.createElement('div');
+        rose.className = 'rose-element';
+        rose.innerText = roseIcons[Math.floor(Math.random() * roseIcons.length)];
+        rose.style.left = Math.random() * 100 + 'vw';
+        rose.style.fontSize = (1.5 + Math.random() * 1) + 'rem'; // Varies size
+        rose.style.animationDuration = (5 + Math.random() * 5) + 's'; // Varies fall speed
+        rose.style.opacity = (0.6 + Math.random() * 0.4); // Varies transparency
+        
+        container.appendChild(rose);
+        
+        // Remove element after it has fallen off-screen
+        setTimeout(() => {
+          rose.remove();
+        }, 11000); // slightly longer than max animation duration
+      }, 250); // frequency of flower spawn
+    }
+
     // 3. Celebrate Action: Red Heart Confetti + Large Background Heart
     function celebrate() {
       // Reveal Large Background Double Heart
@@ -296,46 +374,34 @@
       document.getElementById('celebrate-btn').style.display = 'none';
       document.getElementById('date-section').style.display = 'block';
 
-      // Red Hearts & Purple Glitter Particle Mix
+      triggerGlitterEffect();
+    }
+
+    // 4. Handle "i will" click -> Reveal Kiss/Hug options
+    function acceptDate() {
+      document.getElementById('first-question').style.display = 'none';
+      document.getElementById('affection-section').style.display = 'block';
+      triggerGlitterEffect();
+    }
+
+    // 5. Handle Final Kiss/Hug Choice
+    function finalChoice(option) {
+      alert(`Can't wait for Aug 9! Sending you lots of love for choosing ${option}! ❤️✨`);
+      triggerGlitterEffect();
+    }
+
+    // Glitter & Red Heart Explosion Helper
+    function triggerGlitterEffect() {
       const redAndPurpleColors = ['#ff0055', '#ff4081', '#8a2be2', '#9b51e0', '#ffffff'];
 
-      // Center Heart Explosions
       confetti({
-        particleCount: 150,
-        spread: 90,
+        particleCount: 120,
+        spread: 85,
         origin: { y: 0.6 },
         colors: redAndPurpleColors,
-        scalar: 1.3
+        scalar: 1.2
       });
-
-      // Continuous Flying Red Heart & Glitter Stream
-      const duration = 3.5 * 1000;
-      const animationEnd = Date.now() + duration;
-
-      const interval = setInterval(function() {
-        const timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-
-        confetti({
-          particleCount: 10,
-          angle: 60,
-          spread: 60,
-          origin: { x: 0, y: 0.7 },
-          colors: redAndPurpleColors
-        });
-
-        confetti({
-          particleCount: 10,
-          angle: 120,
-          spread: 60,
-          origin: { x: 1, y: 0.7 },
-          colors: redAndPurpleColors
-        });
-      }, 150);
     }
   </script>
-  </body>
+</body>
 </html>
