@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Birthday!</title>
+  <title>Happy Birthday Juujuu!</title>
   
   <!-- Canvas Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -24,7 +24,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow-x: hidden;
+      overflow: hidden;
+      position: relative;
     }
 
     /* 1. Black Overlay Screen (30 Seconds) */
@@ -41,7 +42,7 @@
       justify-content: center;
       align-items: center;
       opacity: 1;
-      transition: opacity 1.5s ease;
+      transition: opacity 1s ease;
     }
 
     #black-screen.fade-out {
@@ -51,13 +52,44 @@
 
     .loading-text {
       color: #bb86fc;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       letter-spacing: 2px;
       animation: pulse 2s infinite;
+      margin-bottom: 25px;
     }
 
-    /* 2. Birthday Card Styling */
+    /* 2. Primary Buttons */
+    .btn {
+      background: linear-gradient(135deg, #8a2be2, #4a00e0);
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 14px 35px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 0 30px rgba(187, 134, 252, 0.9);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* Hidden Show On Button inside black screen initially */
+    #show-on-btn {
+      display: none;
+    }
+
+    /* 3. Main Card Container */
     .card-container {
+      display: none; /* Revealed by Show On button */
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(15px);
       border: 1px solid rgba(187, 134, 252, 0.2);
@@ -69,10 +101,11 @@
       box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
       position: relative;
       z-index: 10;
+      animation: fadeIn 1.2s ease forwards;
     }
 
     .title {
-      font-size: 2.8rem;
+      font-size: 2.6rem;
       font-weight: 800;
       background: linear-gradient(135deg, #e0b0ff, #9b51e0, #ffffff);
       -webkit-background-clip: text;
@@ -85,31 +118,51 @@
       font-size: 1.1rem;
       color: #d8c4f0;
       line-height: 1.6;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
-    /* 3. Celebrate Button */
-    .celebrate-btn {
-      background: linear-gradient(135deg, #8a2be2, #4a00e0);
-      color: #ffffff;
-      font-size: 1.2rem;
-      font-weight: bold;
-      padding: 15px 35px;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
-      transition: all 0.3s ease;
-      outline: none;
+    /* 4. Date Proposal Section */
+    #date-section {
+      display: none;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(187, 134, 252, 0.3);
+      animation: fadeIn 1s ease forwards;
     }
 
-    .celebrate-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 0 30px rgba(187, 134, 252, 0.9);
+    .date-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffb7c5;
+      text-shadow: 0 0 10px rgba(255, 183, 197, 0.7);
+      margin-bottom: 20px;
     }
 
-    .celebrate-btn:active {
-      transform: translateY(1px) scale(0.98);
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .choice-btn {
+      background: linear-gradient(135deg, #ff4081, #e91e63);
+      box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
+    }
+
+    /* 5. Double Joined Hearts Background */
+    #heart-bg {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18rem;
+      opacity: 0.15;
+      z-index: 1;
+      pointer-events: none;
+      animation: floatPulse 3s infinite ease-in-out;
+      user-select: none;
     }
 
     /* Animations */
@@ -117,53 +170,88 @@
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Black Screen Overlay -->
+  <!-- 1. Black Screen Overlay -->
   <div id="black-screen">
-    <p class="loading-text">✨ Preparing your special surprise...</p>
+    <p id="loading-msg" class="loading-text">✨ Preparing your special surprise...</p>
+    <button id="show-on-btn" class="btn" onclick="revealBirthdayCard()">Show On</button>
   </div>
 
-  <!-- Birthday Wish Content -->
-  <div class="card-container">
-    <h1 class="title">Happy Birthday! 🎉</h1>
+  <!-- Background Double Hearts -->
+  <div id="heart-bg">💕</div>
+
+  <!-- 2. Main Birthday Wish Card -->
+  <div id="main-card" class="card-container">
+    <h1 class="title">Happy Birthday Juujuu! 💕🎉</h1>
     <p class="message">
-      May your year ahead be filled with endless joy, unforgettable moments, and incredible success. 
-      Press the button below to start the celebration!
+      May your year ahead be filled with endless joy, unforgettable moments, and incredible success.
     </p>
-    <button class="celebrate-btn" onclick="triggerPurpleGlitter()">Celebrate ✨</button>
+    
+    <button id="celebrate-btn" class="btn" onclick="celebrate()">Celebrate ✨</button>
+
+    <!-- 3. Date Invitation Section -->
+    <div id="date-section">
+      <p class="date-text">will come out for dating in aug 9?</p>
+      <div class="button-group">
+        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait! ❤️')">i will</button>
+        <button class="btn choice-btn" onclick="alert('Yay! Can\'t wait! ❤️')">i will</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // 1. Black Screen Delay (30 Seconds)
+    // 1. Show "Show On" button after 30 seconds
     setTimeout(() => {
-      const blackScreen = document.getElementById('black-screen');
-      if (blackScreen) {
-        blackScreen.classList.add('fade-out');
-        setTimeout(() => {
-          blackScreen.style.display = 'none';
-        }, 1500); // Wait for fade transition to finish
-      }
-    }, 30000); // 30000 ms = 30 seconds
+      document.getElementById('loading-msg').style.display = 'none';
+      document.getElementById('show-on-btn').style.display = 'inline-block';
+    }, 30000); // 30000 milliseconds = 30 seconds
 
-    // 2. Purple Glitter & Confetti Burst Function
-    function triggerPurpleGlitter() {
-      // Purple, lavender, silver, and pink glitter colors
+    // 2. Hide Black Screen & Reveal Card
+    function revealBirthdayCard() {
+      const blackScreen = document.getElementById('black-screen');
+      blackScreen.classList.add('fade-out');
+      
+      setTimeout(() => {
+        blackScreen.style.display = 'none';
+        document.getElementById('main-card').style.display = 'block';
+      }, 1000);
+    }
+
+    // 3. Celebrate Action: Purple Glitter + Double Hearts + Date Text & Options
+    function celebrate() {
+      // Show Background Double Joined Hearts
+      document.getElementById('heart-bg').style.display = 'block';
+
+      // Hide Celebrate button and display Date Section
+      document.getElementById('celebrate-btn').style.display = 'none';
+      document.getElementById('date-section').style.display = 'block';
+
+      // Purple Glitter & Confetti Burst
       const glitterColors = ['#8a2be2', '#9b51e0', '#e0b0ff', '#ffffff', '#ff69b4'];
 
-      // Center explosion
       confetti({
-        particleCount: 120,
-        spread: 80,
+        particleCount: 130,
+        spread: 85,
         origin: { y: 0.6 },
         colors: glitterColors,
         scalar: 1.2
       });
 
-      // Side fireworks stream
-      const duration = 2.5 * 1000;
+      // Continuous Fireworks Stream
+      const duration = 3 * 1000;
       const animationEnd = Date.now() + duration;
 
       const interval = setInterval(function() {
@@ -173,7 +261,6 @@
           return clearInterval(interval);
         }
 
-        // Left side stream
         confetti({
           particleCount: 8,
           angle: 60,
@@ -182,7 +269,6 @@
           colors: glitterColors
         });
 
-        // Right side stream
         confetti({
           particleCount: 8,
           angle: 120,
