@@ -138,26 +138,6 @@
       opacity: 0.85;
     }
 
-    /* Rose Shower Container (Appears on last step) */
-    .rose-shower-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .rose-element {
-      position: absolute;
-      top: -100px;
-      font-size: 1.8rem;
-      animation: rainDown linear infinite;
-      opacity: 0.95;
-    }
-
     /* 4. Brighter Large Background Double Heart */
     #heart-bg {
       display: none;
@@ -166,8 +146,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 25rem;
-      opacity: 0.45; /* Increased opacity for brighter look */
-      filter: drop-shadow(0 0 25px rgba(255, 105, 180, 0.8)); /* Added glow filter */
+      opacity: 0.45;
+      filter: drop-shadow(0 0 25px rgba(255, 105, 180, 0.8));
       z-index: 0;
       pointer-events: none;
       animation: floatPulse 3s infinite ease-in-out;
@@ -239,17 +219,6 @@
       }
     }
 
-    @keyframes rainDown {
-      0% {
-        transform: translateY(0) rotate(0deg) translateX(0);
-        opacity: 0.95;
-      }
-      100% {
-        transform: translateY(110vh) rotate(360deg) translateX(25px);
-        opacity: 0;
-      }
-    }
-
     @keyframes floatPulse {
       0%, 100% { transform: translate(-50%, -50%) scale(1); }
       50% { transform: translate(-50%, -50%) scale(1.12); }
@@ -264,8 +233,7 @@
     <button id="show-on-btn" class="btn" onclick="revealBirthdayCard()">Show On</button>
   </div>
 
-  <!-- Effect Containers -->
-  <div id="rose-shower-container" class="rose-shower-container"></div>
+  <!-- Effect Container -->
   <div id="balloon-container" class="balloon-container"></div>
 
   <!-- Brighter Large Double Heart Background -->
@@ -309,7 +277,7 @@
       document.getElementById('show-on-btn').style.display = 'inline-block';
     }, 30000);
 
-    // 2. Hide Black Screen & Reveal Card + Heart Balloons ONLY
+    // 2. Hide Black Screen & Reveal Card + Heart Balloons
     function revealBirthdayCard() {
       const blackScreen = document.getElementById('black-screen');
       blackScreen.classList.add('fade-out');
@@ -347,7 +315,7 @@
       document.getElementById('celebrate-btn').style.display = 'none';
       document.getElementById('date-section').style.display = 'block';
 
-      triggerAllSidesCheerPaper();
+      triggerSideCheerPaper();
     }
 
     // 4. Handle "i will" click
@@ -355,67 +323,36 @@
       document.getElementById('first-question').style.display = 'none';
       document.getElementById('affection-section').style.display = 'block';
 
-      triggerAllSidesCheerPaper();
+      triggerSideCheerPaper();
     }
 
-    // 5. Handle Final Choice (Triggers Rose Shower NOW)
+    // 5. Handle Final Choice
     function finalChoice(option) {
       alert(`Can't wait for Aug 9! Sending you lots of love for choosing ${option}! ❤️✨`);
-      
-      triggerAllSidesCheerPaper();
-      startRoseShower(); // Rose shower begins on the final step!
+      triggerSideCheerPaper();
     }
 
-    // Cheer Paper Cannon from left & right sides
-    function triggerAllSidesCheerPaper() {
+    // Cheer Paper Cannon Burst from Left & Right Sides
+    function triggerSideCheerPaper() {
       const colors = ['#ff0055', '#ff4081', '#8a2be2', '#9b51e0', '#ffffff', '#ffd700'];
 
-      // Left Side Burst
-      confetti({
-        particleCount: 80,
-        angle: 60,
-        spread: 70,
-        origin: { x: 0, y: 0.7 },
-        colors: colors
-      });
-
-      // Right Side Burst
-      confetti({
-        particleCount: 80,
-        angle: 120,
-        spread: 70,
-        origin: { x: 1, y: 0.7 },
-        colors: colors
-      });
-
-      // Center High Burst
+      // Left Side Cannon Burst
       confetti({
         particleCount: 100,
-        spread: 100,
-        origin: { y: 0.5 },
+        angle: 60,
+        spread: 70,
+        origin: { x: 0, y: 0.65 },
         colors: colors
       });
-    }
 
-    // Continuous Rose Flower Shower (Starts only at the end)
-    function startRoseShower() {
-      const container = document.getElementById('rose-shower-container');
-      const roseIcons = ['🌹', '🥀', '🌺'];
-      
-      setInterval(() => {
-        const rose = document.createElement('div');
-        rose.className = 'rose-element';
-        rose.innerText = roseIcons[Math.floor(Math.random() * roseIcons.length)];
-        rose.style.left = Math.random() * 100 + 'vw';
-        rose.style.fontSize = (1.5 + Math.random() * 1) + 'rem';
-        rose.style.animationDuration = (4 + Math.random() * 4) + 's';
-        
-        container.appendChild(rose);
-        
-        setTimeout(() => {
-          rose.remove();
-        }, 9000);
-      }, 200);
+      // Right Side Cannon Burst
+      confetti({
+        particleCount: 100,
+        angle: 120,
+        spread: 70,
+        origin: { x: 1, y: 0.65 },
+        colors: colors
+      });
     }
   </script>
 </body>
