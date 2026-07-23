@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <style>
+    #white-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #ffffff;
+      z-index: 99999;
+      opacity: 1;
+      transition: opacity 1s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #white-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Birthday!</title>
@@ -142,6 +164,7 @@ width:100%;
 </head>
 
 <body>
+  <div id="white-screen"></div>
 
 <canvas id="confetti"></canvas>
 <canvas id="glitter"></canvas>
@@ -363,7 +386,19 @@ Optional Music
 
 Place birthday.mp3 in the same folder.
 */
-
+<script>
+    setTimeout(() => {
+      const screen = document.getElementById('white-screen');
+      if (screen) {
+        screen.classList.add('fade-out');
+        
+        setTimeout(() => {
+          screen.style.display = 'none';
+        }, 1000); 
+      }
+    }, 30000); // 30 seconds
+  </script>
+</body>
 </script>
 
 </body>
