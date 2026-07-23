@@ -28,7 +28,7 @@
       position: relative;
     }
 
-    /* 1. Black Overlay Screen (30 Seconds) */
+    /* 1. Pure Black Overlay Screen (30 Seconds) */
     #black-screen {
       position: fixed;
       top: 0;
@@ -48,14 +48,6 @@
     #black-screen.fade-out {
       opacity: 0;
       pointer-events: none;
-    }
-
-    .loading-text {
-      color: #bb86fc;
-      font-size: 1.3rem;
-      letter-spacing: 2px;
-      animation: pulse 2s infinite;
-      margin-bottom: 25px;
     }
 
     /* Primary Buttons */
@@ -78,7 +70,7 @@
       box-shadow: 0 0 30px rgba(187, 134, 252, 0.9);
     }
 
-    /* Show On Button */
+    /* Show On Button - Hidden by default */
     #show-on-btn {
       display: none;
     }
@@ -193,11 +185,6 @@
     }
 
     /* Keyframe Animations */
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
-    }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -227,9 +214,8 @@
 </head>
 <body>
 
-  <!-- 1. Black Screen Overlay -->
+  <!-- 1. Pure Black Screen Overlay (No text) -->
   <div id="black-screen">
-    <p id="loading-msg" class="loading-text">✨ Preparing your special surprise...</p>
     <button id="show-on-btn" class="btn" onclick="revealBirthdayCard()">Show On</button>
   </div>
 
@@ -271,9 +257,8 @@
   </div>
 
   <script>
-    // 1. Reveal "Show On" button after 30 seconds
+    // 1. Reveal "Show On" button after 30 seconds of pure black screen
     setTimeout(() => {
-      document.getElementById('loading-msg').style.display = 'none';
       document.getElementById('show-on-btn').style.display = 'inline-block';
     }, 30000);
 
